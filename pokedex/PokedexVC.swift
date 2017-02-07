@@ -30,6 +30,8 @@ class PokedexVC: UIViewController, UICollectionViewDelegate, UICollectionViewDat
         collection.delegate = self
         searchBar.delegate = self
         
+        searchBar.returnKeyType = UIReturnKeyType.done
+        
         parsePokemonCSV()
         initAudio()
         
@@ -96,7 +98,24 @@ class PokedexVC: UIViewController, UICollectionViewDelegate, UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        return
+        
+        var poke: Pokemon!
+        if inSearchMode {
+            poke = filteredPokemon[indexPath.row]
+        } else {
+            poke = pokemon[indexPath.row]
+        }
+        performSegue(withIdentifier: "pokemonDetailVC", sender: poke)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "pokemonDetailVC" {
+            if let detailVC = segue.destination as? PokemonDetailVC {
+                if let poke = sender as? Pokemon {
+                    detailVC.pokemon = poke
+                }
+            }
+        }
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -114,10 +133,15 @@ class PokedexVC: UIViewController, UICollectionViewDelegate, UICollectionViewDat
         }
     }
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        view.endEditing(true)
+    }
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text == nil || searchBar.text == " " {
             inSearchMode = false
             collection.reloadData()
+            view.endEditing(true)
         } else {
             inSearchMode = true
             let lower = searchBar.text!.lowercased()
@@ -125,6 +149,8 @@ class PokedexVC: UIViewController, UICollectionViewDelegate, UICollectionViewDat
             collection.reloadData()
         }
     }
+    
+    
     
     
     
