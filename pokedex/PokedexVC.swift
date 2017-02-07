@@ -90,6 +90,7 @@ class PokedexVC: UIViewController, UICollectionViewDelegate, UICollectionViewDat
         }
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if inSearchMode {
             return filteredPokemon.count
